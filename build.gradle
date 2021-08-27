@@ -17,6 +17,11 @@ repositories {
 
 dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.26'
+	
+	//implementation 'net.sourceforge.cglib:com.springsource.net.sf.cglib:2.2.0'
+	implementation 'cglib:cglib:2.2'
+	implementation 'org.apache.commons:com.springsource.org.apache.commons.logging:1.1.1'
+	implementation 'org.springframework:spring-context:3.0.7.RELEASE'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
