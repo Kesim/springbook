@@ -1,4 +1,4 @@
-package springbook;
+package springbook.user.dao;
 
 import java.sql.SQLException;
 
