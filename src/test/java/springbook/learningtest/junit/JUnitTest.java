@@ -1,9 +1,11 @@
 package springbook.learningtest.junit;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -13,23 +15,23 @@ import org.junit.Test;
  * 각 테스트에서 새로 생성된 오브젝트를 static으로 저장한 기존 오브젝트와 비교하여 확인.
  */
 public class JUnitTest {
-	static JUnitTest testObject;
+	static Set<JUnitTest> testObjects = new HashSet<>();
 	
 	@Test
 	public void test1() {
-		assertThat(this, is(not(sameInstance(testObject))));
-		testObject = this;
+		assertThat(testObjects, not(hasItem(this)));
+		testObjects.add(this);
 	}
 	
 	@Test
 	public void test2() {
-		assertThat(this, is(not(sameInstance(testObject))));
-		testObject = this;
+		assertThat(testObjects, not(hasItem(this)));
+		testObjects.add(this);
 	}
 	
 	@Test
 	public void test3() {
-		assertThat(this, is(not(sameInstance(testObject))));
-		testObject = this;
+		assertThat(testObjects, not(hasItem(this)));
+		testObjects.add(this);
 	}
 }
