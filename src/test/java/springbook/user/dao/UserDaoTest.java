@@ -3,7 +3,6 @@ package springbook.user.dao;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Before;
@@ -33,7 +32,7 @@ public class UserDaoTest {
 	}
 	
 	@Test
-	public void addAndGet() throws SQLException {
+	public void addAndGet(){
 		dao.deleteAll();
 		assertThat(dao.getCount(), is(0));
 		
@@ -51,7 +50,7 @@ public class UserDaoTest {
 	}
 	
 	@Test
-	public void count() throws SQLException{
+	public void count(){
 		dao.deleteAll();
 		assertThat(dao.getCount(), is(0));
 		
@@ -66,7 +65,7 @@ public class UserDaoTest {
 	}
 	
 	@Test(expected = EmptyResultDataAccessException.class)
-	public void getUserFailure() throws SQLException{
+	public void getUserFailure(){
 		dao.deleteAll();
 		assertThat(dao.getCount(), is(0));
 		
@@ -74,7 +73,7 @@ public class UserDaoTest {
 	}
 	
 	@Test
-	public void getAll() throws SQLException {
+	public void getAll(){
 		dao.deleteAll();
 		
 		List<User> users0 = dao.getAll();
