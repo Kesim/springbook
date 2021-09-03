@@ -13,6 +13,18 @@ import springbook.user.domain.User;
 
 public class UserDao {
 	private JdbcTemplate jdbcTemplate;
+	
+	private RowMapper<User> userMapper =
+		new RowMapper<User>() {
+			@Override
+			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+				User user = new User();
+				user.setid(rs.getString("id"));
+				user.setName(rs.getString("name"));
+				user.setPassword(rs.getString("password"));
+				return user;
+			}
+		};
 
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -25,17 +37,7 @@ public class UserDao {
 
 	public User get(String id) throws SQLException{
 		return this.jdbcTemplate.queryForObject("select * from users where id = ?",
-			new RowMapper<User>() {
-				@Override
-				public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-					User user = new User();
-					user.setid(rs.getString("id"));
-					user.setName(rs.getString("name"));
-					user.setPassword(rs.getString("password"));
-					return user;
-				}
-		}
-		, id);
+			this.userMapper, id);
 	}
 	
 	public void deleteAll() throws SQLException {
@@ -47,16 +49,6 @@ public class UserDao {
 	}
 	
 	public List<User> getAll() throws SQLException {
-		return this.jdbcTemplate.query("select * from users order by id",
-			new RowMapper<User>() {
-				@Override
-				public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-					User user = new User();
-					user.setid(rs.getString("id"));
-					user.setName(rs.getString("name"));
-					user.setPassword(rs.getString("password"));
-					return user;
-				}
-		});
+		return this.jdbcTemplate.query("select * from users order by id", this.userMapper);
 	}
 }
