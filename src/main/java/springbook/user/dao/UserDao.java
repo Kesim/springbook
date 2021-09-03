@@ -27,29 +27,18 @@ public class UserDao {
 	}
 
 	public User get(String id) throws SQLException{
-		Connection c = dataSource.getConnection();
-		
-		PreparedStatement ps = c.prepareStatement(
-				"select * from users where id = ?");
-		ps.setString(1, id);
-		
-		ResultSet rs = ps.executeQuery();
-		
-		User user = null;
-		if(rs.next()) {
-			user = new User();
-			user.setid(rs.getString("id"));
-			user.setName(rs.getString("name"));
-			user.setPassword(rs.getString("password"));	
-		}
-		
-		rs.close();
-		ps.close();
-		c.close();
-		
-		if(user == null) throw new EmptyResultDataAccessException(1);
-		
-		return user;
+		return this.jdbcTemplate.queryForObject("select * from users where id = ?",
+			new RowMapper<User>() {
+				@Override
+				public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+					User user = new User();
+					user.setid(rs.getString("id"));
+					user.setName(rs.getString("name"));
+					user.setPassword(rs.getString("password"));
+					return user;
+				}
+			}
+			, id);
 	}
 	
 	public void deleteAll() throws SQLException {
