@@ -137,4 +137,21 @@ public class UserDaoTest {
 			assertThat(set.translate(null, null, sqlEx), is(DuplicateKeyException.class));
 		}
 	}
+	
+	@Test
+	public void update() {
+		dao.deleteAll();
+		
+		dao.add(user1);
+		
+		user1.setName("¿À¹Î±Ô");
+		user1.setPassword("spring06");
+		user1.setLevel(Level.GOLD);
+		user1.setLogin(1000);
+		user1.setRecommend(999);
+		dao.update(user1);
+		
+		User user1update = dao.get(user1.getId());
+		checkSameUser(user1, user1update);
+	}
 }
