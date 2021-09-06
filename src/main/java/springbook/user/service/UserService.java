@@ -7,7 +7,8 @@ import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
 public class UserService {
-	UserDao userDao;
+	private UserDao userDao;
+	
 	public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
 	public static final int MIN_RECOMMEND_FOR_GOLD = 30;
 
