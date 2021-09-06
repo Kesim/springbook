@@ -19,7 +19,7 @@ public class UserDaoJdbc implements UserDao {
 			@Override
 			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
 				User user = new User();
-				user.setid(rs.getString("id"));
+				user.setId(rs.getString("id"));
 				user.setName(rs.getString("name"));
 				user.setPassword(rs.getString("password"));
 				return user;
