@@ -3,12 +3,14 @@ package springbook.user.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-
+import static org.junit.Assert.fail;
 import static springbook.user.service.MainUserLevelUpgradePolicy.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.MainUserLevelUpgradePolicy.MIN_RECOMMEND_FOR_GOLD;
 
 import java.util.Arrays;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
@@ -28,8 +31,29 @@ public class UserServiceTest {
 	UserService userService;
 	@Autowired
 	UserDao userDao;
+	@Autowired
+	PlatformTransactionManager transactionManager;
 	
 	List<User> users;
+	
+	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
+		private String id;
+		
+		public TestUserLevelUpgradePolicy(String id) {
+			this.id = id;
+		}
+
+		@Override
+		public void upgradeLevel(User user) {
+			if(user.getId().equals(id)) {
+				throw new TestUserLevelException();
+			}
+			super.upgradeLevel(user);
+		}
+	}
+	
+	static class TestUserLevelException extends RuntimeException{
+	}
 	
 	@Before
 	public void setUp() {
@@ -88,5 +112,29 @@ public class UserServiceTest {
 		
 		assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
 		assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+	}
+	
+	@Test
+	public void upgradeAllOrNothing() {
+		TestUserLevelUpgradePolicy testPolicy =
+			new TestUserLevelUpgradePolicy(users.get(3).getId());
+		testPolicy.setUserDao(userDao);
+		UserService testUserService = new UserService();
+		testUserService.setUserDao(userDao);
+		testUserService.setUserLevelUpgradePolicy(testPolicy);
+		testUserService.setTransactionManager(transactionManager);
+		
+		userDao.deleteAll();
+		for(User user : users) {
+			userDao.add(user);
+		}
+		
+		try {
+			testUserService.upgradeLevels();
+			fail("TestUserLevelException expected");
+		} catch(TestUserLevelException e) {
+		}
+		
+		checkLevelUpgraded(users.get(1), false);
 	}
 }
