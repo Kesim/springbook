@@ -31,6 +31,25 @@ public class UserServiceTest {
 	
 	List<User> users;
 	
+	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
+		private String id;
+		
+		public TestUserLevelUpgradePolicy(String id) {
+			this.id = id;
+		}
+
+		@Override
+		public void upgradeLevel(User user) {
+			if(user.getId().equals(id)) {
+				throw new TestUserLevelException();
+			}
+			super.upgradeLevel(user);
+		}
+	}
+	
+	static class TestUserLevelException extends RuntimeException{
+	}
+	
 	@Before
 	public void setUp() {
 		users = Arrays.asList(
