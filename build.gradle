@@ -10,12 +10,11 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.sun.mail:javax.mail:1.6.2'
-	
 	implementation 'mysql:mysql-connector-java:8.0.26'
 	
 	implementation 'cglib:cglib:2.2'
 	implementation 'org.springframework:spring-context:3.0.7.RELEASE'
+	implementation 'org.springframework:spring-context-support:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-jdbc:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-test:3.0.7.RELEASE'
 	
