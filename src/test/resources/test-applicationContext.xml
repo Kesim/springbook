@@ -30,7 +30,5 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="mail.server.com" />
-	</bean>
+	<bean id="mailSender" class="springbook.user.service.DummyMailSender" />
 </beans>
