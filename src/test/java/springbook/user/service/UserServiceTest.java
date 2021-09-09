@@ -151,15 +151,12 @@ public class UserServiceTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void upgradeAllOrNothing() {
 		TestUserLevelUpgradePolicy testPolicy =
 			new TestUserLevelUpgradePolicy(users.get(3).getId());
 		testPolicy.setUserDao(userDao);
-		UserService testUserService = new UserService();
-		testUserService.setUserDao(userDao);
-		testUserService.setUserLevelUpgradePolicy(testPolicy);
-		testUserService.setTransactionManager(transactionManager);
-		testUserService.setMailSender(mailSender);
+		userService.setUserLevelUpgradePolicy(testPolicy);
 		
 		userDao.deleteAll();
 		for(User user : users) {
@@ -167,7 +164,7 @@ public class UserServiceTest {
 		}
 		
 		try {
-			testUserService.upgradeLevels();
+			userService.upgradeLevels();
 			fail("TestUserLevelException expected");
 		} catch(TestUserLevelException e) {
 		}
