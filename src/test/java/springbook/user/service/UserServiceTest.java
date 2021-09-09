@@ -33,6 +33,8 @@ public class UserServiceTest {
 	@Autowired
 	UserService userService;
 	@Autowired
+	UserServiceImpl userServiceImpl;
+	@Autowired
 	UserDao userDao;
 	@Autowired
 	PlatformTransactionManager transactionManager;
@@ -107,7 +109,7 @@ public class UserServiceTest {
 		}
 		
 		MockMailSender mockMailSender = new MockMailSender();
-		userService.setMailSender(mockMailSender);
+		userServiceImpl.setMailSender(mockMailSender);
 		
 		userService.upgradeLevels();
 		
@@ -156,7 +158,7 @@ public class UserServiceTest {
 		TestUserLevelUpgradePolicy testPolicy =
 			new TestUserLevelUpgradePolicy(users.get(3).getId());
 		testPolicy.setUserDao(userDao);
-		userService.setUserLevelUpgradePolicy(testPolicy);
+		userServiceImpl.setUserLevelUpgradePolicy(testPolicy);
 		
 		userDao.deleteAll();
 		for(User user : users) {
