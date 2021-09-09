@@ -37,10 +37,10 @@ public class UserServiceImpl implements UserService {
 	
 	private void upgradeLevel(User user) {
 		userLevelUpgradePolicy.upgradeLevel(user);
-		sendUpgradeMail(user);
+		sendUpgradEMail(user);
 	}
 	
-	private void sendUpgradeMail(User user) {
+	private void sendUpgradEMail(User user) {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(user.getEmail());
 		mailMessage.setFrom("useradmin@ksug.org");
