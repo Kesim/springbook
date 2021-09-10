@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import static springbook.user.service.MainUserLevelUpgradePolicy.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.MainUserLevelUpgradePolicy.MIN_RECOMMEND_FOR_GOLD;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -233,20 +234,27 @@ public class UserServiceTest {
 	@Test
 	@DirtiesContext
 	public void upgradeAllOrNothing() {
-		TestUserLevelUpgradePolicy testPolicy =
-			new TestUserLevelUpgradePolicy(users.get(3).getId());
+		TestUserLevelUpgradePolicy testPolicy = new TestUserLevelUpgradePolicy(
+				users.get(3).getId());
 		testPolicy.setUserDao(userDao);
 		userServiceImpl.setUserLevelUpgradePolicy(testPolicy);
 		
+		TransactionHandler txHandler = new TransactionHandler();
+		txHandler.setTarget(userServiceImpl);
+		txHandler.setTransactionManager(transactionManager);
+		txHandler.setPattern("upgradeLevels");
+		UserService txUserService = (UserService) Proxy.newProxyInstance(
+				getClass().getClassLoader(), new Class[] { UserService.class }, txHandler);
+		
 		userDao.deleteAll();
-		for(User user : users) {
+		for (User user : users) {
 			userDao.add(user);
 		}
 		
 		try {
-			userService.upgradeLevels();
+			txUserService.upgradeLevels();
 			fail("TestUserLevelException expected");
-		} catch(TestUserLevelException e) {
+		} catch (TestUserLevelException e) {
 		}
 		
 		checkLevelUpgraded(users.get(1), false);
