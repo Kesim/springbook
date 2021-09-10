@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import static springbook.user.service.MainUserLevelUpgradePolicy.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.MainUserLevelUpgradePolicy.MIN_RECOMMEND_FOR_GOLD;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -37,6 +37,8 @@ import springbook.user.domain.User;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
+	@Autowired
+	ApplicationContext context;
 	@Autowired
 	UserService userService;
 	@Autowired
@@ -233,18 +235,16 @@ public class UserServiceTest {
 	
 	@Test
 	@DirtiesContext
-	public void upgradeAllOrNothing() {
+	public void upgradeAllOrNothing() throws Exception {
 		TestUserLevelUpgradePolicy testPolicy = new TestUserLevelUpgradePolicy(
 				users.get(3).getId());
 		testPolicy.setUserDao(userDao);
 		userServiceImpl.setUserLevelUpgradePolicy(testPolicy);
 		
-		TransactionHandler txHandler = new TransactionHandler();
-		txHandler.setTarget(userServiceImpl);
-		txHandler.setTransactionManager(transactionManager);
-		txHandler.setPattern("upgradeLevels");
-		UserService txUserService = (UserService) Proxy.newProxyInstance(
-				getClass().getClassLoader(), new Class[] { UserService.class }, txHandler);
+		TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService",
+				TxProxyFactoryBean.class);
+		txProxyFactoryBean.setTarget(userServiceImpl);
+		UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 		
 		userDao.deleteAll();
 		for (User user : users) {
