@@ -178,6 +178,11 @@ public class UserServiceTest {
 		}
 	}
 	
+	@Test
+	public void advisorAutoProxyCreator() {
+		assertThat(testUserService, is(java.lang.reflect.Proxy.class));
+	}
+	
 	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
 		private String id = "madnite1";
 		
