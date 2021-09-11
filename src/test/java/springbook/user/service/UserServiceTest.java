@@ -51,81 +51,6 @@ public class UserServiceTest {
 	
 	List<User> users;
 	
-	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
-		private String id = "madnite1";
-		
-		@Override
-		public void upgradeLevel(User user) {
-			if(user.getId().equals(id)) {
-				throw new TestUserLevelException();
-			}
-			super.upgradeLevel(user);
-		}
-	}
-	
-	static class TestUserLevelException extends RuntimeException{
-	}
-	
-	static class MockMailSender implements MailSender {
-		private List<String> requests = new ArrayList<>();
-		
-		public List<String> getRequests() {
-			return requests;
-		}
-		
-		@Override
-		public void send(SimpleMailMessage simpleMessage) throws MailException {
-			this.requests.add(simpleMessage.getTo()[0]);
-		}
-		
-		@Override
-		public void send(SimpleMailMessage[] simpleMessages) throws MailException {
-		}
-	}
-	
-	static class MockUserDao implements UserDao {
-		private List<User> users;
-		private List<User> updated = new ArrayList<>();
-		
-		public MockUserDao(List<User> users) {
-			this.users = users;
-		}
-		
-		public List<User> getUpdated() {
-			return updated;
-		}
-		
-		@Override
-		public List<User> getAll() {
-			return users;
-		}
-		
-		@Override
-		public void update(User user) {
-			updated.add(user);
-		}
-
-		@Override
-		public void add(User user) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public User get(String id) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void deleteAll() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public int getCount() {
-			throw new UnsupportedOperationException();
-		}
-	}
-	
 	@Before
 	public void setUp() {
 		users = Arrays.asList(
@@ -250,6 +175,81 @@ public class UserServiceTest {
 			assertThat(userUpdate.getLevel(), is(user.getLevel().nextLevel()));
 		} else {
 			assertThat(userUpdate.getLevel(), is(user.getLevel()));
+		}
+	}
+	
+	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
+		private String id = "madnite1";
+		
+		@Override
+		public void upgradeLevel(User user) {
+			if(user.getId().equals(id)) {
+				throw new TestUserLevelException();
+			}
+			super.upgradeLevel(user);
+		}
+	}
+	
+	static class TestUserLevelException extends RuntimeException{
+	}
+	
+	static class MockMailSender implements MailSender {
+		private List<String> requests = new ArrayList<>();
+		
+		public List<String> getRequests() {
+			return requests;
+		}
+		
+		@Override
+		public void send(SimpleMailMessage simpleMessage) throws MailException {
+			this.requests.add(simpleMessage.getTo()[0]);
+		}
+		
+		@Override
+		public void send(SimpleMailMessage[] simpleMessages) throws MailException {
+		}
+	}
+	
+	static class MockUserDao implements UserDao {
+		private List<User> users;
+		private List<User> updated = new ArrayList<>();
+		
+		public MockUserDao(List<User> users) {
+			this.users = users;
+		}
+		
+		public List<User> getUpdated() {
+			return updated;
+		}
+		
+		@Override
+		public List<User> getAll() {
+			return users;
+		}
+		
+		@Override
+		public void update(User user) {
+			updated.add(user);
+		}
+
+		@Override
+		public void add(User user) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public User get(String id) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void deleteAll() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int getCount() {
+			throw new UnsupportedOperationException();
 		}
 	}
 }
