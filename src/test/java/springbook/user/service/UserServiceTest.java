@@ -20,13 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -43,7 +41,7 @@ public class UserServiceTest {
 	@Autowired
 	UserService userService;
 	@Autowired
-	UserServiceImpl userServiceImpl;
+	UserService testUserService;
 	@Autowired
 	UserDao userDao;
 	@Autowired
@@ -54,12 +52,8 @@ public class UserServiceTest {
 	List<User> users;
 	
 	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
-		private String id;
+		private String id = "madnite1";
 		
-		public TestUserLevelUpgradePolicy(String id) {
-			this.id = id;
-		}
-
 		@Override
 		public void upgradeLevel(User user) {
 			if(user.getId().equals(id)) {
@@ -235,25 +229,14 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void upgradeAllOrNothing() throws Exception {
-		TestUserLevelUpgradePolicy testPolicy = new TestUserLevelUpgradePolicy(
-				users.get(3).getId());
-		testPolicy.setUserDao(userDao);
-		userServiceImpl.setUserLevelUpgradePolicy(testPolicy);
-		
-		ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService",
-				ProxyFactoryBean.class);
-		txProxyFactoryBean.setTarget(userServiceImpl);
-		UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-		
 		userDao.deleteAll();
 		for (User user : users) {
 			userDao.add(user);
 		}
 		
 		try {
-			txUserService.upgradeLevels();
+			testUserService.upgradeLevels();
 			fail("TestUserLevelException expected");
 		} catch (TestUserLevelException e) {
 		}
