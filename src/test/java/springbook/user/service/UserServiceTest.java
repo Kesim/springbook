@@ -20,13 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -43,7 +41,7 @@ public class UserServiceTest {
 	@Autowired
 	UserService userService;
 	@Autowired
-	UserServiceImpl userServiceImpl;
+	UserService testUserService;
 	@Autowired
 	UserDao userDao;
 	@Autowired
@@ -52,85 +50,6 @@ public class UserServiceTest {
 	MailSender mailSender;
 	
 	List<User> users;
-	
-	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
-		private String id;
-		
-		public TestUserLevelUpgradePolicy(String id) {
-			this.id = id;
-		}
-
-		@Override
-		public void upgradeLevel(User user) {
-			if(user.getId().equals(id)) {
-				throw new TestUserLevelException();
-			}
-			super.upgradeLevel(user);
-		}
-	}
-	
-	static class TestUserLevelException extends RuntimeException{
-	}
-	
-	static class MockMailSender implements MailSender {
-		private List<String> requests = new ArrayList<>();
-		
-		public List<String> getRequests() {
-			return requests;
-		}
-		
-		@Override
-		public void send(SimpleMailMessage simpleMessage) throws MailException {
-			this.requests.add(simpleMessage.getTo()[0]);
-		}
-		
-		@Override
-		public void send(SimpleMailMessage[] simpleMessages) throws MailException {
-		}
-	}
-	
-	static class MockUserDao implements UserDao {
-		private List<User> users;
-		private List<User> updated = new ArrayList<>();
-		
-		public MockUserDao(List<User> users) {
-			this.users = users;
-		}
-		
-		public List<User> getUpdated() {
-			return updated;
-		}
-		
-		@Override
-		public List<User> getAll() {
-			return users;
-		}
-		
-		@Override
-		public void update(User user) {
-			updated.add(user);
-		}
-
-		@Override
-		public void add(User user) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public User get(String id) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void deleteAll() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public int getCount() {
-			throw new UnsupportedOperationException();
-		}
-	}
 	
 	@Before
 	public void setUp() {
@@ -235,25 +154,14 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void upgradeAllOrNothing() throws Exception {
-		TestUserLevelUpgradePolicy testPolicy = new TestUserLevelUpgradePolicy(
-				users.get(3).getId());
-		testPolicy.setUserDao(userDao);
-		userServiceImpl.setUserLevelUpgradePolicy(testPolicy);
-		
-		ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService",
-				ProxyFactoryBean.class);
-		txProxyFactoryBean.setTarget(userServiceImpl);
-		UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-		
 		userDao.deleteAll();
 		for (User user : users) {
 			userDao.add(user);
 		}
 		
 		try {
-			txUserService.upgradeLevels();
+			testUserService.upgradeLevels();
 			fail("TestUserLevelException expected");
 		} catch (TestUserLevelException e) {
 		}
@@ -267,6 +175,86 @@ public class UserServiceTest {
 			assertThat(userUpdate.getLevel(), is(user.getLevel().nextLevel()));
 		} else {
 			assertThat(userUpdate.getLevel(), is(user.getLevel()));
+		}
+	}
+	
+	@Test
+	public void advisorAutoProxyCreator() {
+		assertThat(testUserService, is(java.lang.reflect.Proxy.class));
+	}
+	
+	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
+		private String id = "madnite1";
+		
+		@Override
+		public void upgradeLevel(User user) {
+			if(user.getId().equals(id)) {
+				throw new TestUserLevelException();
+			}
+			super.upgradeLevel(user);
+		}
+	}
+	
+	static class TestUserLevelException extends RuntimeException{
+	}
+	
+	static class MockMailSender implements MailSender {
+		private List<String> requests = new ArrayList<>();
+		
+		public List<String> getRequests() {
+			return requests;
+		}
+		
+		@Override
+		public void send(SimpleMailMessage simpleMessage) throws MailException {
+			this.requests.add(simpleMessage.getTo()[0]);
+		}
+		
+		@Override
+		public void send(SimpleMailMessage[] simpleMessages) throws MailException {
+		}
+	}
+	
+	static class MockUserDao implements UserDao {
+		private List<User> users;
+		private List<User> updated = new ArrayList<>();
+		
+		public MockUserDao(List<User> users) {
+			this.users = users;
+		}
+		
+		public List<User> getUpdated() {
+			return updated;
+		}
+		
+		@Override
+		public List<User> getAll() {
+			return users;
+		}
+		
+		@Override
+		public void update(User user) {
+			updated.add(user);
+		}
+
+		@Override
+		public void add(User user) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public User get(String id) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void deleteAll() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int getCount() {
+			throw new UnsupportedOperationException();
 		}
 	}
 }

@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+	runtimeOnly 'org.aspectj:aspectjweaver:1.6.8'
+
 	implementation 'mysql:mysql-connector-java:8.0.26'
 	
 	implementation 'cglib:cglib:2.2'
