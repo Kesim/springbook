@@ -10,9 +10,13 @@ repositories {
 }
 
 dependencies {
+	runtimeOnly 'org.aspectj:aspectjweaver:1.6.8'
+
 	implementation 'mysql:mysql-connector-java:8.0.26'
 	
 	implementation 'cglib:cglib:2.2'
+	
+	implementation 'org.mockito:mockito-core:3.12.4'
 	implementation 'org.springframework:spring-context:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-context-support:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-jdbc:3.0.7.RELEASE'
