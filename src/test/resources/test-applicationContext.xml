@@ -27,7 +27,7 @@
 		<property name="mailSender" ref="mailSender" />
 	</bean>
 	
-	<bean id="testUserService" parent="userService">
+	<bean id="testUserService" class="springbook.user.service.UserServiceTest$TestUserService" parent="userService">
 		<property name="userLevelUpgradePolicy" ref="testUserLevelUpgradePolicy" />
 	</bean>
 	
