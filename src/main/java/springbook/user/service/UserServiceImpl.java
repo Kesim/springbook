@@ -26,6 +26,35 @@ public class UserServiceImpl implements UserService {
 		this.mailSender = mailSender;
 	}
 	
+	@Override
+	public void add(User user) {
+		if (user.getLevel() == null) {
+			user.setLevel(Level.BASIC);
+		}
+		userDao.add(user);
+	}
+	
+	@Override
+	public User get(String id) {
+		return userDao.get(id);
+	}
+	
+	@Override
+	public List<User> getAll() {
+		return userDao.getAll();
+	}
+	
+	@Override
+	public void update(User user) {
+		userDao.update(user);
+	}
+	
+	@Override
+	public void deleteAll() {
+		userDao.deleteAll();
+	}
+	
+	@Override
 	public void upgradeLevels() {
 		List<User> users = userDao.getAll();
 		for (User user : users) {
@@ -48,12 +77,5 @@ public class UserServiceImpl implements UserService {
 		mailMessage.setText("사용자님의 등급이 " + user.getLevel().name() + "로 업그레이드되었습니다");
 		
 		mailSender.send(mailMessage);
-	}
-	
-	public void add(User user) {
-		if (user.getLevel() == null) {
-			user.setLevel(Level.BASIC);
-		}
-		userDao.add(user);
 	}
 }
