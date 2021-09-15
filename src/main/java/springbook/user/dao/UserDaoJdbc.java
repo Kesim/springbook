@@ -3,7 +3,6 @@ package springbook.user.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -12,10 +11,11 @@ import org.springframework.jdbc.core.RowMapper;
 
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
+import springbook.user.sqlservice.SqlService;
 
 public class UserDaoJdbc implements UserDao {
 	private JdbcTemplate jdbcTemplate;
-	private Map<String, String> sqlMap;
+	private SqlService sqlService;
 	
 	private RowMapper<User> userMapper = new RowMapper<User>() {
 		@Override
@@ -36,40 +36,40 @@ public class UserDaoJdbc implements UserDao {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
-	public void setSqlMap(Map<String, String> sqlMap) {
-		this.sqlMap = sqlMap;
+	public void setSqlService(SqlService sqlService) {
+		this.sqlService = sqlService;
 	}
 	
 	@Override
 	public void add(final User user) {
-		this.jdbcTemplate.update(sqlMap.get("add"), user.getId(), user.getName(),
+		this.jdbcTemplate.update(sqlService.getSql("add"), user.getId(), user.getName(),
 				user.getPassword(), user.getEmail(), user.getLevel().intValue(), user.getLogin(),
 				user.getRecommend());
 	}
 	
 	@Override
 	public void deleteAll() {
-		this.jdbcTemplate.update(sqlMap.get("deleteAll"));
+		this.jdbcTemplate.update(sqlService.getSql("deleteAll"));
 	}
 	
 	@Override
 	public User get(String id) {
-		return this.jdbcTemplate.queryForObject(sqlMap.get("get"), this.userMapper, id);
+		return this.jdbcTemplate.queryForObject(sqlService.getSql("get"), this.userMapper, id);
 	}
 	
 	@Override
 	public List<User> getAll() {
-		return this.jdbcTemplate.query(sqlMap.get("getAll"), this.userMapper);
+		return this.jdbcTemplate.query(sqlService.getSql("getAll"), this.userMapper);
 	}
 	
 	@Override
 	public int getCount() {
-		return this.jdbcTemplate.queryForInt(sqlMap.get("getCount"));
+		return this.jdbcTemplate.queryForInt(sqlService.getSql("getCount"));
 	}
 	
 	@Override
 	public void update(User user) {
-		this.jdbcTemplate.update(sqlMap.get("update"), user.getName(), user.getPassword(),
+		this.jdbcTemplate.update(sqlService.getSql("update"), user.getName(), user.getPassword(),
 				user.getEmail(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(),
 				user.getId());
 	}
