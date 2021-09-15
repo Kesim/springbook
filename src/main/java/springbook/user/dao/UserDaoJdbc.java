@@ -42,34 +42,34 @@ public class UserDaoJdbc implements UserDao {
 	
 	@Override
 	public void add(final User user) {
-		this.jdbcTemplate.update(sqlService.getSql("add"), user.getId(), user.getName(),
+		this.jdbcTemplate.update(sqlService.getSql("userAdd"), user.getId(), user.getName(),
 				user.getPassword(), user.getEmail(), user.getLevel().intValue(), user.getLogin(),
 				user.getRecommend());
 	}
 	
 	@Override
 	public void deleteAll() {
-		this.jdbcTemplate.update(sqlService.getSql("deleteAll"));
+		this.jdbcTemplate.update(sqlService.getSql("userDeleteAll"));
 	}
 	
 	@Override
 	public User get(String id) {
-		return this.jdbcTemplate.queryForObject(sqlService.getSql("get"), this.userMapper, id);
+		return this.jdbcTemplate.queryForObject(sqlService.getSql("userGet"), this.userMapper, id);
 	}
 	
 	@Override
 	public List<User> getAll() {
-		return this.jdbcTemplate.query(sqlService.getSql("getAll"), this.userMapper);
+		return this.jdbcTemplate.query(sqlService.getSql("userGetAll"), this.userMapper);
 	}
 	
 	@Override
 	public int getCount() {
-		return this.jdbcTemplate.queryForInt(sqlService.getSql("getCount"));
+		return this.jdbcTemplate.queryForInt(sqlService.getSql("userGetCount"));
 	}
 	
 	@Override
 	public void update(User user) {
-		this.jdbcTemplate.update(sqlService.getSql("update"), user.getName(), user.getPassword(),
+		this.jdbcTemplate.update(sqlService.getSql("userUpdate"), user.getName(), user.getPassword(),
 				user.getEmail(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(),
 				user.getId());
 	}
