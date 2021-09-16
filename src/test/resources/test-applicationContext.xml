@@ -27,11 +27,14 @@
 	
 	<bean id="sqlService" class="springbook.user.sqlservice.OxmSqlService">
 		<property name="unmarshaller" ref="unmarshaller" />
+		<property name="sqlRegistry" ref="sqlRegistry" />
 	</bean>
 	
 	<bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
 		<property name="contextPath" value="springbook.user.sqlservice.jaxb" />
 	</bean>
+	
+	<bean id="sqlRegistry" class="springbook.user.sqlservice.ConcurrentHashMapSqlRegistry"></bean>
 	
 	<bean id="userService" class="springbook.user.service.UserServiceImpl">
 		<property name="userDao" ref="userDao" />
