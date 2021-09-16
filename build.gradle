@@ -19,6 +19,7 @@ dependencies {
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 	
+	
 	implementation 'org.mockito:mockito-core:3.12.4'
 	implementation 'org.springframework:spring-context:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-context-support:3.0.7.RELEASE'
@@ -27,4 +28,6 @@ dependencies {
 	implementation 'org.springframework:spring-test:3.0.7.RELEASE'
 	
 	testImplementation 'junit:junit:4.7'
+	
+	testImplementation 'org.hsqldb:hsqldb:1.8.0.10'
 }
