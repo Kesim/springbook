@@ -23,6 +23,7 @@ dependencies {
 	implementation 'org.springframework:spring-context:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-context-support:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-jdbc:3.0.7.RELEASE'
+	implementation 'org.springframework:spring-oxm:3.0.7.RELEASE'
 	implementation 'org.springframework:spring-test:3.0.7.RELEASE'
 	
 	testImplementation 'junit:junit:4.7'
