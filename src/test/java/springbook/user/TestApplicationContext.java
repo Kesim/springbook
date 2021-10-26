@@ -2,7 +2,9 @@ package springbook.user;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -17,7 +19,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.mysql.cj.jdbc.Driver;
 
 import springbook.user.dao.UserDao;
-import springbook.user.dao.UserDaoJdbc;
 import springbook.user.service.DummyMailSender;
 import springbook.user.service.MainUserLevelUpgradePolicy;
 import springbook.user.service.UserLevelUpgradePolicy;
@@ -32,6 +33,7 @@ import springbook.user.sqlservice.updatable.EmbeddedDbSqlRegistry;
 
 @Configuration
 @EnableTransactionManagement
+@ComponentScan(basePackages = "springbook.user")
 public class TestApplicationContext {
 	/*
 	 * DB 연결과 트랜잭션
@@ -60,18 +62,13 @@ public class TestApplicationContext {
 	 * 애플리케이션 로직 & 테스트
 	 */
 	
-	@Bean
-	public UserDao userDao() {
-		UserDaoJdbc dao = new UserDaoJdbc();
-		dao.setDataSource(dataSource());
-		dao.setSqlService(sqlService());
-		return dao;
-	}
+	@Autowired
+	UserDao userDao;
 	
 	@Bean
 	public UserService userService() {
 		UserServiceImpl service = new UserServiceImpl();
-		service.setUserDao(userDao());
+		service.setUserDao(this.userDao);
 		service.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
 		service.setMailSender(mailSender());
 		return service;
@@ -80,7 +77,7 @@ public class TestApplicationContext {
 	@Bean
 	public UserService testUserService() {
 		TestUserService testService = new TestUserService();
-		testService.setUserDao(userDao());
+		testService.setUserDao(this.userDao);
 		testService.setUserLevelUpgradePolicy(testUserLevelUpgradePolicy());
 		testService.setMailSender(mailSender());
 		return testService;
@@ -94,14 +91,14 @@ public class TestApplicationContext {
 	@Bean
 	public UserLevelUpgradePolicy userLevelUpgradePolicy() {
 		MainUserLevelUpgradePolicy policy = new MainUserLevelUpgradePolicy();
-		policy.setUserDao(userDao());
+		policy.setUserDao(this.userDao);
 		return policy;
 	}
 	
 	@Bean
 	public UserLevelUpgradePolicy testUserLevelUpgradePolicy() {
 		TestUserLevelUpgradePolicy testPolicy = new TestUserLevelUpgradePolicy();
-		testPolicy.setUserDao(userDao());
+		testPolicy.setUserDao(this.userDao);
 		return testPolicy;
 	}
 	
