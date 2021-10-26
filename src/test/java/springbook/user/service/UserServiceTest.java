@@ -189,7 +189,7 @@ public class UserServiceTest {
 		testUserService.getAll();
 	}
 	
-	static class TestUserService extends UserServiceImpl {
+	public static class TestUserService extends UserServiceImpl {
 		@Override
 		public List<User> getAll() {
 			for(User user : super.getAll()) {
@@ -199,7 +199,7 @@ public class UserServiceTest {
 		}
 	}
 	
-	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
+	public static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
 		private String id = "madnite1";
 		
 		@Override
