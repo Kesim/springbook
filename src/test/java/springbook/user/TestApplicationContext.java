@@ -1,16 +1,18 @@
 package springbook.user;
-import javax.annotation.Resource;
+
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.mail.MailSender;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysql.cj.jdbc.Driver;
 
@@ -21,7 +23,6 @@ import springbook.user.service.MainUserLevelUpgradePolicy;
 import springbook.user.service.UserLevelUpgradePolicy;
 import springbook.user.service.UserService;
 import springbook.user.service.UserServiceImpl;
-import springbook.user.service.UserServiceTest;
 import springbook.user.service.UserServiceTest.TestUserLevelUpgradePolicy;
 import springbook.user.service.UserServiceTest.TestUserService;
 import springbook.user.sqlservice.OxmSqlService;
@@ -30,10 +31,11 @@ import springbook.user.sqlservice.SqlService;
 import springbook.user.sqlservice.updatable.EmbeddedDbSqlRegistry;
 
 @Configuration
-@ImportResource("/test-applicationContext.xml")
+@EnableTransactionManagement
 public class TestApplicationContext {
-	@Resource
-	DataSource embeddedDatabase;
+	/*
+	 * DB 연결과 트랜잭션
+	 */
 	
 	@Bean
 	public DataSource dataSource() {
@@ -53,6 +55,10 @@ public class TestApplicationContext {
 		tm.setDataSource(dataSource());
 		return tm;
 	}
+	
+	/*
+	 * 애플리케이션 로직 & 테스트
+	 */
 	
 	@Bean
 	public UserDao userDao() {
@@ -99,6 +105,10 @@ public class TestApplicationContext {
 		return testPolicy;
 	}
 	
+	/*
+	 * SQL 서비스
+	 */
+	
 	@Bean
 	public SqlService sqlService() {
 		OxmSqlService sqlService = new OxmSqlService();
@@ -110,7 +120,7 @@ public class TestApplicationContext {
 	@Bean
 	public SqlRegistry sqlRegistry() {
 		EmbeddedDbSqlRegistry sqlRegistry = new EmbeddedDbSqlRegistry();
-		sqlRegistry.setDataSource(this.embeddedDatabase);
+		sqlRegistry.setDataSource(embeddedDatabase());
 		return sqlRegistry;
 	}
 	
@@ -119,5 +129,14 @@ public class TestApplicationContext {
 		Jaxb2Marshaller unMarshaller = new Jaxb2Marshaller();
 		unMarshaller.setContextPath("springbook.user.sqlservice.jaxb");
 		return unMarshaller;
+	}
+	
+	@Bean
+	public DataSource embeddedDatabase() {
+		return new EmbeddedDatabaseBuilder()
+				.setName("embeddedDatabase")
+				.setType(EmbeddedDatabaseType.HSQL)
+				.addScript("classpath:/springbook/user/sqlservice/updatable/sqlRegistrySchema.sql")
+				.build();
 	}
 }
