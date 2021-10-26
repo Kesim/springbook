@@ -28,7 +28,6 @@ import springbook.user.service.UserServiceImpl;
 @EnableTransactionManagement
 @ComponentScan(basePackages = "springbook.user")
 @Import(SqlServiceContext.class)
-@PropertySource("/database.properties")
 public class AppContext {
 	@Value("${db.driverClass}")
 	private Class<? extends Driver> driverClass;
@@ -79,6 +78,7 @@ public class AppContext {
 	
 	@Configuration
 	@Profile("production")
+	@PropertySource("/database.properties")
 	public static class ProductionAppContext {
 		@Bean
 		public MailSender mailSender() {

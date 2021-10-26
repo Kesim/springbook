@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.MailSender;
 
 import springbook.user.dao.UserDao;
@@ -17,6 +18,7 @@ import springbook.user.service.UserServiceTest.TestUserService;
 @Configuration
 @Import(AppContext.class)
 @Profile("test")
+@PropertySource("/database.properties")
 public class TestAppContext {
 	@Autowired
 	UserDao userDao;
