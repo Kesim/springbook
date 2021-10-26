@@ -16,12 +16,8 @@ import com.mysql.cj.jdbc.Driver;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "springbook.user")
-@Import(SqlServiceContext.class)
+@Import({SqlServiceContext.class, ProductionAppContext.class})
 public class AppContext {
-	/*
-	 * DB 연결과 트랜잭션
-	 */
-	
 	@Bean
 	public DataSource dataSource() {
 		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
