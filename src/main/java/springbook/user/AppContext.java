@@ -2,6 +2,7 @@ package springbook.user;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysql.cj.jdbc.Driver;
+
+import springbook.user.service.UserLevelUpgradePolicy;
+import springbook.user.service.UserService;
+import springbook.user.service.UserServiceImpl;
 
 @Configuration
 @EnableTransactionManagement
@@ -35,5 +40,19 @@ public class AppContext {
 		DataSourceTransactionManager tm = new DataSourceTransactionManager();
 		tm.setDataSource(dataSource());
 		return tm;
+	}
+	
+	/*
+	 * 局撇府纳捞记 肺流 
+	 */
+	
+	@Autowired
+	UserLevelUpgradePolicy userLevelUpgradePolicy;
+	
+	@Bean
+	public UserService userService() {
+		UserServiceImpl userService = new UserServiceImpl();
+		userService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
+		return userService;
 	}
 }

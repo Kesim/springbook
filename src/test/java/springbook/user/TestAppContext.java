@@ -21,12 +21,10 @@ public class TestAppContext {
 	@Autowired
 	UserDao userDao;
 	
-	@Bean
+	@Bean(name = "testUserService")
 	public UserService testUserService() {
 		TestUserService testService = new TestUserService();
-		testService.setUserDao(this.userDao);
 		testService.setUserLevelUpgradePolicy(testUserLevelUpgradePolicy());
-		testService.setMailSender(mailSender());
 		return testService;
 	}
 	
@@ -38,7 +36,6 @@ public class TestAppContext {
 	@Bean
 	public UserLevelUpgradePolicy testUserLevelUpgradePolicy() {
 		TestUserLevelUpgradePolicy testPolicy = new TestUserLevelUpgradePolicy();
-		testPolicy.setUserDao(this.userDao);
 		return testPolicy;
 	}
 }

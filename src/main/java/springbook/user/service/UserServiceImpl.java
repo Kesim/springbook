@@ -15,7 +15,6 @@ import springbook.user.domain.User;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDao userDao;
-	@Autowired
 	private UserLevelUpgradePolicy userLevelUpgradePolicy;
 	@Autowired
 	private MailSender mailSender;
