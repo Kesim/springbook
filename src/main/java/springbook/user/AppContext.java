@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springbook.user.service.UserLevelUpgradePolicy;
 import springbook.user.service.UserService;
 import springbook.user.service.UserServiceImpl;
+import springbook.user.sqlservice.SqlMapConfig;
+import springbook.user.sqlservice.UserSqlMapConfig;
 
 @Configuration
 @EnableTransactionManagement
@@ -37,6 +39,11 @@ public class AppContext {
 	private String username;
 	@Value("${db.password}")
 	private String password;
+	
+	@Bean
+	public SqlMapConfig sqlMapConfig() {
+		return new UserSqlMapConfig();
+	}
 	
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
