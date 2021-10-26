@@ -1,10 +1,15 @@
 package springbook.user.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
+@Component("userLevelUpgradePolicy")
 public class MainUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
+	@Autowired
 	private UserDao userDao;
 	
 	public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
