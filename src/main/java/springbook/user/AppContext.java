@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -26,12 +25,13 @@ import springbook.user.dao.UserDao;
 import springbook.user.service.UserLevelUpgradePolicy;
 import springbook.user.service.UserService;
 import springbook.user.service.UserServiceImpl;
+import springbook.user.sqlservice.EnableSqlService;
 import springbook.user.sqlservice.SqlMapConfig;
 
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "springbook.user")
-@Import(SqlServiceContext.class)
+@EnableSqlService
 public class AppContext implements SqlMapConfig {
 	@Value("${db.driverClass}")
 	private Class<? extends Driver> driverClass;
