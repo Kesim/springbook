@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
@@ -20,17 +22,17 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import springbook.user.dao.UserDao;
 import springbook.user.service.UserLevelUpgradePolicy;
 import springbook.user.service.UserService;
 import springbook.user.service.UserServiceImpl;
 import springbook.user.sqlservice.SqlMapConfig;
-import springbook.user.sqlservice.UserSqlMapConfig;
 
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "springbook.user")
 @Import(SqlServiceContext.class)
-public class AppContext {
+public class AppContext implements SqlMapConfig {
 	@Value("${db.driverClass}")
 	private Class<? extends Driver> driverClass;
 	@Value("${db.url}")
@@ -40,9 +42,9 @@ public class AppContext {
 	@Value("${db.password}")
 	private String password;
 	
-	@Bean
-	public SqlMapConfig sqlMapConfig() {
-		return new UserSqlMapConfig();
+	@Override
+	public Resource getSqlMapResource() {
+		return new ClassPathResource("sqlmap.xml", UserDao.class);
 	}
 	
 	@Bean
