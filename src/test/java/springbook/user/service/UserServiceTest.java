@@ -21,21 +21,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import springbook.user.TestAppContext;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-applicationContext.xml")
+@ActiveProfiles("test")
+@ContextConfiguration(classes = TestAppContext.class)
 public class UserServiceTest {
 	@Autowired
 	ApplicationContext context;
@@ -49,6 +53,8 @@ public class UserServiceTest {
 	PlatformTransactionManager transactionManager;
 	@Autowired
 	MailSender mailSender;
+	@Autowired
+	DefaultListableBeanFactory bf;
 	
 	List<User> users;
 	
@@ -189,7 +195,14 @@ public class UserServiceTest {
 		testUserService.getAll();
 	}
 	
-	static class TestUserService extends UserServiceImpl {
+	@Test
+	public void beans() {
+		for(String n : bf.getBeanDefinitionNames()) {
+			System.out.println(n + "\t" + bf.getBean(n).getClass().getName());
+		}
+	}
+	
+	public static class TestUserService extends UserServiceImpl {
 		@Override
 		public List<User> getAll() {
 			for(User user : super.getAll()) {
@@ -199,7 +212,7 @@ public class UserServiceTest {
 		}
 	}
 	
-	static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
+	public static class TestUserLevelUpgradePolicy extends MainUserLevelUpgradePolicy {
 		private String id = "madnite1";
 		
 		@Override
